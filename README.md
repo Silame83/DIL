@@ -4,8 +4,8 @@ optionally, build local infrastructure Kubernetes cluster via Vagrant platform
 1. K8s cluster
     Main Vagrant config file with additional configuration shell files
    Local infrastructure deployment
-   ---------------------------------------------------------------------------
-    Files tf (Terraform)
+
+Files tf (Terraform)
    Deployment infrastructure on AWS, include VPC, RDS, CI/CD stages
    Theoretical template YAML file with Streamer application
 
