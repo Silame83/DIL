@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <streamer>
+spec:
+  selector:
+    matchLabels:
+      run: <streamer>
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: <streamer>
+    spec:
+      containers:
+        - name: <streamer>
+          image: <image to streamer>
+          ports:
+            - containerPort: <port of streamer app>
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: <streamer>
+  labels:
+    run: <streamer>
+spec:
+  selector:
+    run: <streamer>
+  ports:
+    - port: <port to exposing>
+      targetPort: <port of streamer app>
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: <streamer>
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: <streamer>
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+

@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins
+  labels:
+    name: jenkins
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins
+  labels:
+    run: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: jenkins
+  template:
+    metadata:
+      namespace: jenkins
+      labels:
+        run: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: jenkins/jenkins:latest
+#        command:
+#          - "bash"
+#          - "--rm"
+#          - "-u root"
+#          - "-v $(which docker):/usr/bin/docker"
+#          - "-v $HOME/.jenkins/:/var/jenkins_home"
+#          - "-v /var/run/docker.sock:/var/run/docker.sock"
+        ports:
+        - containerPort: 8080
+          protocol: "TCP"
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "256Mi"
+          limits:
+            cpu: "2000m"
+            memory: "2048Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-svc
+  namespace: jenkins
+  labels:
+    run: jenkins
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 8080
+    nodePort: 32080
+  selector:
+    run: jenkins
+  type: "NodePort"
+
+
